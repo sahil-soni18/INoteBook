@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 
 const AddNote = () => {
   const [title, setTitle] = useState('');
-  const [note, setNote] = useState('');
+  const [description, setDescription] = useState('');
+  const [noteID, setNoteID] = useState(0);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
 
   const handleBodyChange = (e) => {
-    setNote(e.target.value);
+    setDescription(e.target.value);
   };
 
 const handleSubmit = async (e) => {
@@ -17,13 +18,14 @@ const handleSubmit = async (e) => {
 
   // Construct the data object to send to the server
   const data = {
+    noteID: noteID,
     title: title,
-    note: note
+    description: description
   };
 
   try {
     // Make a POST request to the server
-    console.log(`titles: ${title}, body: ${note}`);
+    console.log(`titles: ${title}, body: ${description}`);
     const response = await fetch('http://localhost:3000/addNote', {
       method: 'POST',
       headers: {
@@ -36,7 +38,8 @@ const handleSubmit = async (e) => {
     if (response.ok) {
       // Reset the form after successful submission
       setTitle('');
-      setNote('');
+      setDescription('');
+      setNoteID(noteID + 1);
       alert('Note added successfully!');
     } else {
       // Handle error response from the server
@@ -70,9 +73,9 @@ const handleSubmit = async (e) => {
             className="form-control"
             rows="15"
             cols="100"
-            value={note}
+            value={description}
             onChange={handleBodyChange}
-            name="note" // Add name attribute
+            name="description" // Add name attribute
           ></textarea>
         </div>
         <button type="submit" className="btn btn-primary m-4" style={{ width: "50%" }}>

@@ -23,7 +23,7 @@ client.connect();
 app.get('/', async (req, res) => {
     try {
         console.log(`Connect`);
-        const result = await client.query(`SELECT title, note FROM notes`);
+        const result = await client.query(`SELECT title, description FROM notes`);
         const data = result.rows;
         console.log(data[0]);
         res.send(data);
@@ -36,11 +36,12 @@ app.get('/', async (req, res) => {
 app.post('/addNote', async (req, res) => {
     try {
         console.log(`req.body.title: ${req.body.title}`);
-        console.log(`req.body.note: ${req.body.note}`);
+        console.log(`req.body.description: ${req.body.description}`);
+        const noteID = req.body.noteID;
         const title = req.body.title;
-        const note = req.body.note;
-        console.log(`note = ${note}`);
-        await client.query(`INSERT INTO notes (title, note) VALUES ($1, $2)`, [title, note]);
+        const description = req.body.description;
+        console.log(`note = ${description}`);
+        await client.query(`INSERT INTO notes (noteID, title, description) VALUES ($1, $2, $3)`, [noteID, title, description]);
         res.status(201).send('Note added successfully');
     } catch (err) {
         console.log(err);
@@ -54,11 +55,11 @@ app.post('/update/:id', async (req, res) => {
     const id = req.params.id;
     try {
         console.log(`req.body.title: ${req.body.title}`);
-        console.log(`req.body.note: ${req.body.note}`);
+        console.log(`req.body.description: ${req.body.description}`);
         const title = req.body.title;
-        const note = req.body.note;
-        console.log(note);
-        await client.query(`UPDATE notes SET title=$1, note=$2 WHERE id=$3`, [title, note, id]);
+        const description = req.body.description;
+        console.log(description);
+        await client.query(`UPDATE notes SET title=$1, description=$2 WHERE noteID=$3`, [title, description, id]);
         res.status(201).send('Note UPDATED successfully');
     } catch (err) {
         console.log(err);
@@ -68,11 +69,11 @@ app.post('/update/:id', async (req, res) => {
     // res.redirect('/');
 });
 
-app.get('/editNote/:id', async (req, res) => {
-    const id = req.params.id;
+app.get('/editNote/:noteId', async (req, res) => {
+    const id = req.params.noteId;
     console.log(id);
     try {
-        const result = await client.query(`SELECT * FROM notes WHERE id = $1`, [id]);
+        const result = await client.query(`SELECT * FROM notes WHERE noteId = $1`, [id]);
         console.log(`result.rows[0] = ${result.rows}`);
         res.send(result.rows[0]);
     } catch (err) {
@@ -81,12 +82,13 @@ app.get('/editNote/:id', async (req, res) => {
     }
 });
 
-app.delete('/delete/:id', async (req, res) => {
-    const id = req.params.id;
-    console.log(id);
+app.delete('/delete/:noteId', async (req, res) => {
+    const id = req.params.noteId;
+    console.log(`id = ${id}`);
     try {
-        await client.query(`DELETE FROM notes WHERE id = $1`, [id]);
+        await client.query(`DELETE FROM notes WHERE noteID = $1`, [id]);
         res.status(201).send('Note DELETED successfully');
+        
     } catch (err) {
         console.log(err);
         res.status(500).send('Internal Server Error');

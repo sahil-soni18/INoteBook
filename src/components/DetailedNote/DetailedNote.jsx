@@ -3,31 +3,35 @@ import { useParams } from 'react-router-dom';
 
 const DetailedNote = () => {
   const { id } = useParams();
+  console.log(`${JSON.stringify(useParams())} is useParam output...`);
+  console.log(id, "is noteID outside of useEffect.");
   const [title, setTitle] = useState('');
-  const [note, setNote] = useState('');
-  const increseId = parseInt(id) + 1;
+  const [description, setDescription] = useState('');
+  // const increseId = parseInt(id) + 1;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/editNote/${increseId}`);
+        console.log(`noteID: ${id}`);
+        // console.log(`increaseID: ${increseId}`);
+        const response = await fetch(`http://localhost:3000/editNote/${id}`);
         const data = await response.json();
         setTitle(data.title);
-        setNote(data.note);
+        setDescription(data.description);
       } catch (error) {
         console.error('Fetching data failed in detailed notes:', error);
       }
     };
 
     fetchData();
-  }, [id]);
+  }, [ id]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
 
-  const handleNoteChange = (e) => {
-    setNote(e.target.value);
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
   };
 
   
@@ -37,13 +41,13 @@ const handleSubmit = async (e) => {
   // Construct the data object to send to the server
   const data = {
     title: title,
-    note: note
+    description: description,
   };
 
   try {
     // Make a POST request to the server
-    console.log(`titles: ${title}, body: ${note}`);
-    const response = await fetch(`http://localhost:3000/update/${increseId}`, {
+    console.log(`titles: ${title}, body: ${description}`);
+    const response = await fetch(`http://localhost:3000/update/${id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -55,7 +59,7 @@ const handleSubmit = async (e) => {
     if (response.ok) {
       // Reset the form after successful submission
       setTitle('');
-      setNote('');
+      setDescription('');
       alert('Note added successfully!');
     } else {
       // Handle error response from the server
@@ -88,9 +92,9 @@ const handleSubmit = async (e) => {
               className="form-control" 
               rows="15" 
               cols="100" 
-              value={note} 
-              onChange={handleNoteChange} 
-              name='note'
+              value={description} 
+              onChange={handleDescriptionChange} 
+              name='description' 
             ></textarea>
           </div>
           <button
