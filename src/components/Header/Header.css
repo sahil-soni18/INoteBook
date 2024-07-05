@@ -1,0 +1,18 @@
+.header-navbar {
+    background-color: #343a40;
+  }
+  
+  .header-link {
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 1.25rem;
+  }
+  
+  .header-button img {
+    height: 100%;
+  }
+  
+  .header-form .col-auto {
+    padding: 0 5px;
+  }
+  
